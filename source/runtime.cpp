@@ -898,36 +898,7 @@ void reshade::runtime::on_present(api::command_queue *present_queue)
 	if (!ini_file::flush_cache())
 		_preset_save_successful = false;
 
-#if RESHADE_ADDON == 1
-	// Detect high network traffic
-	extern volatile long g_network_traffic;
 
-	static int cooldown = 0, traffic = 0;
-	if (cooldown-- > 0)
-	{
-		traffic += g_network_traffic > 0;
-	}
-	else
-	{
-		const bool was_enabled = addon_enabled;
-		addon_enabled = traffic < 10;
-		traffic = 0;
-		cooldown = 60;
-
-#if RESHADE_FX
-		if (addon_enabled != was_enabled)
-		{
-			if (was_enabled)
-				_backup_texture_semantic_bindings = _texture_semantic_bindings;
-
-			for (const auto &info : _backup_texture_semantic_bindings)
-			{
-				if (info.second.first == _effect_color_srv[0] && info.second.second == _effect_color_srv[1])
-					continue;
-
-				update_texture_bindings(info.first.c_str(), addon_enabled ? info.second.first : api::resource_view { 0 }, addon_enabled ? info.second.second : api::resource_view { 0 });
-			}
-		}
 #endif
 	}
 
