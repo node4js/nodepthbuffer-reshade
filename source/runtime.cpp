@@ -140,9 +140,9 @@ static std::vector<std::filesystem::path> find_files(const std::vector<std::file
 		if (resolve_path(search_path, ec))
 		{
 			if (const auto it = std::find_if(resolved_search_paths.begin(), resolved_search_paths.end(),
-					[&search_path](const std::pair<std::filesystem::path, bool> &recursive_search_path) {
-						return recursive_search_path.first == search_path;
-					});
+				[&search_path](const std::pair<std::filesystem::path, bool> &recursive_search_path) {
+					return recursive_search_path.first == search_path;
+				});
 				it != resolved_search_paths.end())
 				it->second |= recursive_search;
 			else
@@ -159,7 +159,7 @@ static std::vector<std::filesystem::path> find_files(const std::vector<std::file
 		if (!entry.is_directory(ec) &&
 			std::find(extensions.begin(), extensions.end(), entry.path().extension()) != extensions.end())
 			files.emplace_back(entry); // Construct path from directory entry in-place
-	};
+		};
 
 	for (const std::pair<std::filesystem::path, bool> &resolved_search_path : resolved_search_paths)
 	{
@@ -310,18 +310,18 @@ bool reshade::runtime::on_init()
 			usage |= api::resource_usage::copy_source;
 
 		if (!_device->create_resource(
-				api::resource_desc(_width, _height, 1, 1, api::format_to_typeless(_back_buffer_format), 1, api::memory_heap::gpu_only, usage),
-				nullptr, back_buffer_desc.texture.samples == 1 ? api::resource_usage::copy_dest : api::resource_usage::resolve_dest, &_back_buffer_resolved) ||
+			api::resource_desc(_width, _height, 1, 1, api::format_to_typeless(_back_buffer_format), 1, api::memory_heap::gpu_only, usage),
+			nullptr, back_buffer_desc.texture.samples == 1 ? api::resource_usage::copy_dest : api::resource_usage::resolve_dest, &_back_buffer_resolved) ||
 			!_device->create_resource_view(
-				_back_buffer_resolved,
-				api::resource_usage::render_target,
-				api::resource_view_desc(api::format_to_default_typed(_back_buffer_format, 0)),
-				&_back_buffer_targets.emplace_back()) ||
+			_back_buffer_resolved,
+			api::resource_usage::render_target,
+			api::resource_view_desc(api::format_to_default_typed(_back_buffer_format, 0)),
+			&_back_buffer_targets.emplace_back()) ||
 			!_device->create_resource_view(
-				_back_buffer_resolved,
-				api::resource_usage::render_target,
-				api::resource_view_desc(api::format_to_default_typed(_back_buffer_format, 1)),
-				&_back_buffer_targets.emplace_back()))
+			_back_buffer_resolved,
+			api::resource_usage::render_target,
+			api::resource_view_desc(api::format_to_default_typed(_back_buffer_format, 1)),
+			&_back_buffer_targets.emplace_back()))
 		{
 			log::message(log::level::error, "Failed to create resolve texture resource!");
 			goto exit_failure;
@@ -330,10 +330,10 @@ bool reshade::runtime::on_init()
 		if (need_copy_pipeline)
 		{
 			if (!_device->create_resource_view(
-					_back_buffer_resolved,
-					api::resource_usage::shader_resource,
-					api::resource_view_desc(_back_buffer_format),
-					&_back_buffer_resolved_srv))
+				_back_buffer_resolved,
+				api::resource_usage::shader_resource,
+				api::resource_view_desc(_back_buffer_format),
+				&_back_buffer_resolved_srv))
 			{
 				log::message(log::level::error, "Failed to create resolve shader resource view!");
 				goto exit_failure;
@@ -375,8 +375,8 @@ bool reshade::runtime::on_init()
 	{
 		// Use VK_FORMAT_R16_SFLOAT format, since it is mandatory according to the spec (see https://www.khronos.org/registry/vulkan/specs/1.1/html/vkspec.html#features-required-format-support)
 		if (!_device->create_resource(
-				api::resource_desc(1, 1, 1, 1, api::format::r16_float, 1, api::memory_heap::gpu_only, api::resource_usage::shader_resource),
-				nullptr, api::resource_usage::shader_resource, &_empty_tex))
+			api::resource_desc(1, 1, 1, 1, api::format::r16_float, 1, api::memory_heap::gpu_only, api::resource_usage::shader_resource),
+			nullptr, api::resource_usage::shader_resource, &_empty_tex))
 		{
 			log::message(log::level::error, "Failed to create empty texture resource!");
 			goto exit_failure;
@@ -423,19 +423,19 @@ bool reshade::runtime::on_init()
 		const api::resource back_buffer_resource = get_back_buffer(i);
 
 		if (!_device->create_resource_view(
-				back_buffer_resource,
-				api::resource_usage::render_target,
-				api::resource_view_desc(
-					back_buffer_desc.texture.samples > 1 ? api::resource_view_type::texture_2d_multisample : api::resource_view_type::texture_2d,
-					api::format_to_default_typed(back_buffer_desc.texture.format, 0), 0, 1, 0, 1),
-				&_back_buffer_targets.emplace_back()) ||
+			back_buffer_resource,
+			api::resource_usage::render_target,
+			api::resource_view_desc(
+			back_buffer_desc.texture.samples > 1 ? api::resource_view_type::texture_2d_multisample : api::resource_view_type::texture_2d,
+			api::format_to_default_typed(back_buffer_desc.texture.format, 0), 0, 1, 0, 1),
+			&_back_buffer_targets.emplace_back()) ||
 			!_device->create_resource_view(
-				back_buffer_resource,
-				api::resource_usage::render_target,
-				api::resource_view_desc(
-					back_buffer_desc.texture.samples > 1 ? api::resource_view_type::texture_2d_multisample : api::resource_view_type::texture_2d,
-					api::format_to_default_typed(back_buffer_desc.texture.format, 1), 0, 1, 0, 1),
-				&_back_buffer_targets.emplace_back()))
+			back_buffer_resource,
+			api::resource_usage::render_target,
+			api::resource_view_desc(
+			back_buffer_desc.texture.samples > 1 ? api::resource_view_type::texture_2d_multisample : api::resource_view_type::texture_2d,
+			api::format_to_default_typed(back_buffer_desc.texture.format, 1), 0, 1, 0, 1),
+			&_back_buffer_targets.emplace_back()))
 		{
 			log::message(log::level::error, "Failed to create back buffer render targets!");
 			goto exit_failure;
@@ -738,26 +738,26 @@ void reshade::runtime::on_present(api::command_queue *present_queue)
 							// Change to next value if the associated shortcut key was pressed
 							switch (variable.type.base)
 							{
-								case reshadefx::type::t_bool:
-								{
-									bool data = false;
-									get_uniform_value(variable, &data);
-									set_uniform_value(variable, !data);
-									break;
-								}
-								case reshadefx::type::t_int:
-								case reshadefx::type::t_uint:
-								{
-									int data[4] = {};
-									get_uniform_value(variable, data, 4);
-									const std::string_view ui_items = variable.annotation_as_string("ui_items");
-									int num_items = 0;
-									for (size_t offset = 0, next; (next = ui_items.find('\0', offset)) != std::string_view::npos; offset = next + 1)
-										num_items++;
-									data[0] = (data[0] + 1 >= num_items) ? 0 : data[0] + 1;
-									set_uniform_value(variable, data, 4);
-									break;
-								}
+							case reshadefx::type::t_bool:
+							{
+								bool data = false;
+								get_uniform_value(variable, &data);
+								set_uniform_value(variable, !data);
+								break;
+							}
+							case reshadefx::type::t_int:
+							case reshadefx::type::t_uint:
+							{
+								int data[4] = {};
+								get_uniform_value(variable, data, 4);
+								const std::string_view ui_items = variable.annotation_as_string("ui_items");
+								int num_items = 0;
+								for (size_t offset = 0, next; (next = ui_items.find('\0', offset)) != std::string_view::npos; offset = next + 1)
+									num_items++;
+								data[0] = (data[0] + 1 >= num_items) ? 0 : data[0] + 1;
+								set_uniform_value(variable, data, 4);
+								break;
+							}
 							}
 
 #if RESHADE_GUI
@@ -898,8 +898,8 @@ void reshade::runtime::on_present(api::command_queue *present_queue)
 	if (!ini_file::flush_cache())
 		_preset_save_successful = false;
 
-	
-    #endif
+		}
+#endif
 	}
 
 	if (std::numeric_limits<long>::max() != g_network_traffic)
@@ -921,7 +921,7 @@ void reshade::runtime::load_config()
 			return true;
 		// Fall back to global configuration when an entry does not exist in the local configuration
 		return global_config().get(section, key, values);
-	};
+		};
 
 	config_get("INPUT", "ForceShortcutModifiers", _force_shortcut_modifiers);
 	config_get("INPUT", "KeyScreenshot", _screenshot_key_data);
@@ -1102,16 +1102,16 @@ void reshade::runtime::load_current_preset()
 		}
 
 		if (std::find_if(technique_list.cbegin(), technique_list.cend(),
-				[this](const std::string &technique_name) {
-					const size_t at_pos = technique_name.find('@');
-					if (at_pos == std::string::npos)
-						return true;
-					const auto it = std::find_if(_effects.cbegin(), _effects.cend(),
-						[effect_name = std::filesystem::u8path(technique_name.substr(at_pos + 1))](const effect &effect) {
-							return effect_name == effect.source_file.filename();
-						});
-					return it != _effects.cend() && it->skipped;
-				}) != technique_list.cend())
+			[this](const std::string &technique_name) {
+				const size_t at_pos = technique_name.find('@');
+				if (at_pos == std::string::npos)
+					return true;
+				const auto it = std::find_if(_effects.cbegin(), _effects.cend(),
+					[effect_name = std::filesystem::u8path(technique_name.substr(at_pos + 1))](const effect &effect) {
+					return effect_name == effect.source_file.filename();
+					});
+				return it != _effects.cend() && it->skipped;
+			}) != technique_list.cend())
 		{
 			reload_effects();
 			return;
@@ -1394,7 +1394,7 @@ bool reshade::runtime::switch_to_next_preset(std::filesystem::path filter_path, 
 		// Only add those files that are matching the filter text
 		if (filter_text.empty() ||
 			std::search(preset_name.cbegin(), preset_name.cend(), filter_text.native().begin(), filter_text.native().end(),
-				[](auto c1, auto c2) { return std::towlower(c1) == std::towlower(c2); }) != preset_name.cend())
+			[](auto c1, auto c2) { return std::towlower(c1) == std::towlower(c2); }) != preset_name.cend())
 			preset_paths.push_back(std::move(preset_path));
 	}
 
@@ -1829,7 +1829,7 @@ bool reshade::runtime::load_effect(const std::filesystem::path &source_file, con
 #if !defined(_HAS_COMPLETE_CHARCONV) || _HAS_COMPLETE_CHARCONV
 								, std::chars_format::scientific, 8
 #endif
-								);
+							);
 							if (res.ec == std::errc())
 								code_preamble.append(temp, res.ptr);
 							else
@@ -2067,9 +2067,9 @@ bool reshade::runtime::load_effect(const std::filesystem::path &source_file, con
 
 			// Try to share textures with the same name across effects
 			if (const auto existing_texture = std::find_if(_textures.begin(), _textures.end(),
-					[&new_texture](const texture &item) {
-						return item.unique_name == new_texture.unique_name;
-					});
+				[&new_texture](const texture &item) {
+					return item.unique_name == new_texture.unique_name;
+				});
 				existing_texture != _textures.end())
 			{
 				// Cannot share texture if this is a normal one, but the existing one is a reference and vice versa
@@ -2119,9 +2119,9 @@ bool reshade::runtime::load_effect(const std::filesystem::path &source_file, con
 			{
 				// Try to find another pooled texture to share with (and do not share within the same effect)
 				if (const auto existing_texture = std::find_if(_textures.begin(), _textures.end(),
-						[&new_texture](const texture &item) {
-							return item.annotation_as_int("pooled") && std::find(item.shared.begin(), item.shared.end(), new_texture.effect_index) == item.shared.end() && item.matches_description(new_texture);
-						});
+					[&new_texture](const texture &item) {
+						return item.annotation_as_int("pooled") && std::find(item.shared.begin(), item.shared.end(), new_texture.effect_index) == item.shared.end() && item.matches_description(new_texture);
+					});
 					existing_texture != _textures.end())
 				{
 					// Overwrite referenced texture in samplers with the pooled one
@@ -2164,10 +2164,10 @@ bool reshade::runtime::load_effect(const std::filesystem::path &source_file, con
 		for (reshadefx::technique &tech : permutation.module.techniques)
 		{
 			if (const auto existing_technique = std::find_if(_techniques.begin(), _techniques.end(),
-					[effect_index, &tech](const technique &item) {
-						return item.effect_index == effect_index && item.name == tech.name;
-					});
-					existing_technique != _techniques.end())
+				[effect_index, &tech](const technique &item) {
+					return item.effect_index == effect_index && item.name == tech.name;
+				});
+				existing_technique != _techniques.end())
 			{
 				if (permutation_index >= existing_technique->permutations.size())
 					existing_technique->permutations.resize(permutation_index + 1);
@@ -2206,7 +2206,7 @@ bool reshade::runtime::load_effect(const std::filesystem::path &source_file, con
 	else
 		_reload_remaining_effects = 0; // Force effect initialization in 'update_effects'
 
-	if ( effect.compiled && (effect.preprocessed || source_cached))
+	if (effect.compiled && (effect.preprocessed || source_cached))
 	{
 		if (effect.errors.empty())
 			log::message(log::level::info, "Successfully compiled '%s'%s in %f s.", source_file.u8string().c_str(), permutation_index == 0 ? "" : " permutation", std::chrono::duration_cast<std::chrono::milliseconds>(time_load_finished - time_load_started).count() * 1e-3f);
@@ -2373,8 +2373,8 @@ bool reshade::runtime::create_effect(size_t effect_index, size_t permutation_ind
 		if (permutation_index == 0)
 		{
 			if (!_device->create_resource(
-					api::resource_desc(effect.uniform_data_storage.size(), api::memory_heap::cpu_to_gpu, api::resource_usage::constant_buffer),
-					nullptr, api::resource_usage::cpu_access, &effect.cb))
+				api::resource_desc(effect.uniform_data_storage.size(), api::memory_heap::cpu_to_gpu, api::resource_usage::constant_buffer),
+				nullptr, api::resource_usage::cpu_access, &effect.cb))
 			{
 				log::message(log::level::error, "Failed to create constant buffer for effect file '%s'!", effect.source_file.u8string().c_str());
 				return false;
@@ -2576,7 +2576,7 @@ bool reshade::runtime::create_effect(size_t effect_index, size_t permutation_ind
 					case reshadefx::blend_op::min: return api::blend_op::min;
 					case reshadefx::blend_op::max: return api::blend_op::max;
 					}
-				};
+					};
 				const auto convert_blend_factor = [](reshadefx::blend_factor value) {
 					switch (value) {
 					case reshadefx::blend_factor::zero: return api::blend_factor::zero;
@@ -2591,7 +2591,7 @@ bool reshade::runtime::create_effect(size_t effect_index, size_t permutation_ind
 					case reshadefx::blend_factor::dest_alpha: return api::blend_factor::dest_alpha;
 					case reshadefx::blend_factor::one_minus_dest_alpha: return api::blend_factor::one_minus_dest_alpha;
 					}
-				};
+					};
 
 				// Technically should check for 'api::device_caps::independent_blend' support, but render target write masks are supported in D3D9, when rest is not, so just always set ...
 				api::blend_desc blend_state = {};
@@ -2626,7 +2626,7 @@ bool reshade::runtime::create_effect(size_t effect_index, size_t permutation_ind
 					case reshadefx::stencil_op::increment: return api::stencil_op::increment;
 					case reshadefx::stencil_op::decrement: return api::stencil_op::decrement;
 					}
-				};
+					};
 				const auto convert_stencil_func = [](reshadefx::stencil_func value) {
 					switch (value)
 					{
@@ -2640,7 +2640,7 @@ bool reshade::runtime::create_effect(size_t effect_index, size_t permutation_ind
 					default:
 					case reshadefx::stencil_func::always: return api::compare_op::always;
 					}
-				};
+					};
 
 				api::depth_stencil_desc depth_stencil_state = {};
 				depth_stencil_state.depth_enable = false;
@@ -2854,7 +2854,8 @@ void reshade::runtime::destroy_effect(size_t effect_index)
 		tech.permutations.clear();
 	}
 
-	{	effect &effect = _effects[effect_index];
+	{
+		effect &effect = _effects[effect_index];
 
 		_device->destroy_resource(effect.cb);
 		effect.cb = {};
@@ -3370,9 +3371,9 @@ void reshade::runtime::reorder_techniques(std::vector<size_t> &&technique_indice
 {
 	assert(technique_indices.size() == _techniques.size() && technique_indices.size() == _technique_sorting.size() &&
 		std::all_of(technique_indices.cbegin(), technique_indices.cend(),
-			[this](size_t technique_index) {
-				return std::find(_technique_sorting.cbegin(), _technique_sorting.cend(), technique_index) != _technique_sorting.cend();
-			}));
+		[this](size_t technique_index) {
+			return std::find(_technique_sorting.cbegin(), _technique_sorting.cend(), technique_index) != _technique_sorting.cend();
+		}));
 
 #if RESHADE_ADDON
 	if (!is_loading() && !_is_in_api_call)
@@ -3450,10 +3451,10 @@ void reshade::runtime::load_effects(bool force_load_all)
 	// Keep track of the spawned threads, so the runtime cannot be destroyed while they are still running
 	for (size_t n = 0; n < num_splits; ++n)
 		_worker_threads.emplace_back([this, effect_files, offset, num_splits, n, &preset, force_load_all]() {
-			// Abort loading when initialization state changes (indicating that 'on_reset' was called in the meantime)
-			for (size_t i = 0; i < effect_files.size() && _is_initialized; ++i)
-				if (i * num_splits / effect_files.size() == n)
-					load_effect(effect_files[i], preset, offset + i, 0, force_load_all || effect_files[i].extension() == L".addonfx");
+		// Abort loading when initialization state changes (indicating that 'on_reset' was called in the meantime)
+		for (size_t i = 0; i < effect_files.size() && _is_initialized; ++i)
+			if (i * num_splits / effect_files.size() == n)
+				load_effect(effect_files[i], preset, offset + i, 0, force_load_all || effect_files[i].extension() == L".addonfx");
 		});
 }
 bool reshade::runtime::reload_effect(size_t effect_index)
@@ -3609,9 +3610,9 @@ auto reshade::runtime::add_effect_permutation(uint32_t width, uint32_t height, a
 	const api::format color_format_typeless = api::format_to_typeless(color_format);
 
 	if (const auto it = std::find_if(_effect_permutations.begin(), _effect_permutations.end(),
-			[width, height, color_format_typeless, stencil_format](const effect_permutation &permutation) {
-				return permutation.width == width && permutation.height == height && permutation.color_format == color_format_typeless && permutation.stencil_format == stencil_format;
-			});
+		[width, height, color_format_typeless, stencil_format](const effect_permutation &permutation) {
+			return permutation.width == width && permutation.height == height && permutation.color_format == color_format_typeless && permutation.stencil_format == stencil_format;
+		});
 		it != _effect_permutations.end())
 		return std::distance(_effect_permutations.begin(), it);
 
@@ -3620,8 +3621,8 @@ auto reshade::runtime::add_effect_permutation(uint32_t width, uint32_t height, a
 	permutation.height = height;
 
 	if (!_device->create_resource(
-			api::resource_desc(width, height, 1, 1, color_format_typeless, 1, api::memory_heap::gpu_only, api::resource_usage::copy_dest | api::resource_usage::shader_resource),
-			nullptr, api::resource_usage::shader_resource, &permutation.color_tex))
+		api::resource_desc(width, height, 1, 1, color_format_typeless, 1, api::memory_heap::gpu_only, api::resource_usage::copy_dest | api::resource_usage::shader_resource),
+		nullptr, api::resource_usage::shader_resource, &permutation.color_tex))
 	{
 		log::message(log::level::error, "Failed to create effect color resource (width = %u, height = %u, format = %u)!", width, height, static_cast<uint32_t>(color_format_typeless));
 
@@ -3646,8 +3647,8 @@ auto reshade::runtime::add_effect_permutation(uint32_t width, uint32_t height, a
 
 	if (stencil_format == api::format::unknown ||
 		!_device->create_resource(
-			api::resource_desc(width, height, 1, 1, stencil_format, 1, api::memory_heap::gpu_only, api::resource_usage::depth_stencil),
-			nullptr, api::resource_usage::depth_stencil_write, &permutation.stencil_tex))
+		api::resource_desc(width, height, 1, 1, stencil_format, 1, api::memory_heap::gpu_only, api::resource_usage::depth_stencil),
+		nullptr, api::resource_usage::depth_stencil_write, &permutation.stencil_tex))
 	{
 		log::message(log::level::error, "Failed to create effect stencil resource (width = %u, height = %u, format = %u)!", width, height, static_cast<uint32_t>(stencil_format));
 
@@ -3708,7 +3709,7 @@ void reshade::runtime::update_effects()
 				_reload_remaining_effects += 1;
 
 				_worker_threads.emplace_back([this, effect_index, permutation_index]() {
-						load_effect(_effects[effect_index].source_file, ini_file::load_cache(_current_preset_path), effect_index, permutation_index, true);
+					load_effect(_effects[effect_index].source_file, ini_file::load_cache(_current_preset_path), effect_index, permutation_index, true);
 					});
 			}
 
@@ -3744,9 +3745,9 @@ void reshade::runtime::update_effects()
 		for (editor_instance &instance : _editors)
 		{
 			if (const auto it = std::find_if(_effects.cbegin(), _effects.cend(),
-					[&instance](const effect &effect) {
-						return effect.source_file == instance.file_path || std::find(effect.included_files.begin(), effect.included_files.end(), instance.file_path) != effect.included_files.end();
-					});
+				[&instance](const effect &effect) {
+					return effect.source_file == instance.file_path || std::find(effect.included_files.begin(), effect.included_files.end(), instance.file_path) != effect.included_files.end();
+				});
 				it != _effects.cend())
 			{
 				// Set effect index again in case it was moved during the reload
@@ -3840,181 +3841,181 @@ void reshade::runtime::render_effects(api::command_list *cmd_list, api::resource
 		{
 			switch (variable.special)
 			{
-				case special_uniform::frame_time:
+			case special_uniform::frame_time:
+			{
+				set_uniform_value(variable, _last_frame_duration.count() * 1e-6f);
+				break;
+			}
+			case special_uniform::frame_count:
+			{
+				if (variable.type.is_boolean())
+					set_uniform_value(variable, (_frame_count % 2) == 0);
+				else
+					set_uniform_value(variable, static_cast<unsigned int>(_frame_count % UINT_MAX));
+				break;
+			}
+			case special_uniform::random:
+			{
+				const int min = variable.annotation_as_int("min", 0, 0);
+				const int max = variable.annotation_as_int("max", 0, RAND_MAX);
+				set_uniform_value(variable, min + (std::rand() % (std::abs(max - min) + 1)));
+				break;
+			}
+			case special_uniform::ping_pong:
+			{
+				const float min = variable.annotation_as_float("min", 0, 0.0f);
+				const float max = variable.annotation_as_float("max", 0, 1.0f);
+				const float step_min = variable.annotation_as_float("step", 0);
+				const float step_max = variable.annotation_as_float("step", 1);
+				float increment = step_max == 0 ? step_min : (step_min + std::fmod(static_cast<float>(std::rand()), step_max - step_min + 1));
+				const float smoothing = variable.annotation_as_float("smoothing");
+
+				float value[2] = { 0, 0 };
+				get_uniform_value(variable, value, 2);
+				if (value[1] >= 0)
 				{
-					set_uniform_value(variable, _last_frame_duration.count() * 1e-6f);
-					break;
+					increment = std::max(increment - std::max(0.0f, smoothing - (max - value[0])), 0.05f);
+					increment *= _last_frame_duration.count() * 1e-9f;
+
+					if ((value[0] += increment) >= max)
+						value[0] = max, value[1] = -1;
 				}
-				case special_uniform::frame_count:
+				else
 				{
-					if (variable.type.is_boolean())
-						set_uniform_value(variable, (_frame_count % 2) == 0);
+					increment = std::max(increment - std::max(0.0f, smoothing - (value[0] - min)), 0.05f);
+					increment *= _last_frame_duration.count() * 1e-9f;
+
+					if ((value[0] -= increment) <= min)
+						value[0] = min, value[1] = +1;
+				}
+				set_uniform_value(variable, value, 2);
+				break;
+			}
+			case special_uniform::date:
+			{
+				const std::time_t t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+				struct tm tm; localtime_s(&tm, &t);
+
+				const int value[4] = {
+					tm.tm_year + 1900,
+					tm.tm_mon + 1,
+					tm.tm_mday,
+					tm.tm_hour * 3600 + tm.tm_min * 60 + tm.tm_sec
+				};
+				set_uniform_value(variable, value, 4);
+				break;
+			}
+			case special_uniform::timer:
+			{
+				const unsigned long long timer_ms = std::chrono::duration_cast<std::chrono::milliseconds>(_last_present_time - _start_time).count();
+				set_uniform_value(variable, static_cast<unsigned int>(timer_ms));
+				break;
+			}
+			case special_uniform::key:
+			{
+				if (_input == nullptr)
+					break;
+
+				if (const int keycode = variable.annotation_as_int("keycode");
+					keycode > 7 && keycode < 256)
+				{
+					if (const std::string_view mode = variable.annotation_as_string("mode");
+						mode == "toggle" || variable.annotation_as_int("toggle"))
+					{
+						bool current_value = false;
+						get_uniform_value(variable, &current_value);
+						if (_input->is_key_pressed(keycode))
+							set_uniform_value(variable, !current_value);
+					}
+					else if (mode == "press")
+						set_uniform_value(variable, _input->is_key_pressed(keycode));
 					else
-						set_uniform_value(variable, static_cast<unsigned int>(_frame_count % UINT_MAX));
-					break;
+						set_uniform_value(variable, _input->is_key_down(keycode));
 				}
-				case special_uniform::random:
-				{
-					const int min = variable.annotation_as_int("min", 0, 0);
-					const int max = variable.annotation_as_int("max", 0, RAND_MAX);
-					set_uniform_value(variable, min + (std::rand() % (std::abs(max - min) + 1)));
+				break;
+			}
+			case special_uniform::mouse_point:
+			{
+				if (_input == nullptr)
 					break;
-				}
-				case special_uniform::ping_pong:
-				{
-					const float min = variable.annotation_as_float("min", 0, 0.0f);
-					const float max = variable.annotation_as_float("max", 0, 1.0f);
-					const float step_min = variable.annotation_as_float("step", 0);
-					const float step_max = variable.annotation_as_float("step", 1);
-					float increment = step_max == 0 ? step_min : (step_min + std::fmod(static_cast<float>(std::rand()), step_max - step_min + 1));
-					const float smoothing = variable.annotation_as_float("smoothing");
 
-					float value[2] = { 0, 0 };
-					get_uniform_value(variable, value, 2);
-					if (value[1] >= 0)
+				set_uniform_value(variable, _input->mouse_position_x(), _input->mouse_position_y());
+				break;
+			}
+			case special_uniform::mouse_delta:
+			{
+				if (_input == nullptr)
+					break;
+
+				set_uniform_value(variable, _input->mouse_movement_delta_x(), _input->mouse_movement_delta_y());
+				break;
+			}
+			case special_uniform::mouse_button:
+			{
+				if (_input == nullptr)
+					break;
+
+				if (const int keycode = variable.annotation_as_int("keycode");
+					keycode >= 0 && keycode < 5)
+				{
+					if (const std::string_view mode = variable.annotation_as_string("mode");
+						mode == "toggle" || variable.annotation_as_int("toggle"))
 					{
-						increment = std::max(increment - std::max(0.0f, smoothing - (max - value[0])), 0.05f);
-						increment *= _last_frame_duration.count() * 1e-9f;
-
-						if ((value[0] += increment) >= max)
-							value[0] = max, value[1] = -1;
+						bool current_value = false;
+						get_uniform_value(variable, &current_value);
+						if (_input->is_mouse_button_pressed(keycode))
+							set_uniform_value(variable, !current_value);
 					}
+					else if (mode == "press")
+						set_uniform_value(variable, _input->is_mouse_button_pressed(keycode));
 					else
-					{
-						increment = std::max(increment - std::max(0.0f, smoothing - (value[0] - min)), 0.05f);
-						increment *= _last_frame_duration.count() * 1e-9f;
-
-						if ((value[0] -= increment) <= min)
-							value[0] = min, value[1] = +1;
-					}
-					set_uniform_value(variable, value, 2);
-					break;
+						set_uniform_value(variable, _input->is_mouse_button_down(keycode));
 				}
-				case special_uniform::date:
+				break;
+			}
+			case special_uniform::mouse_wheel:
+			{
+				if (_input == nullptr)
+					break;
+
+				const float min = variable.annotation_as_float("min");
+				const float max = variable.annotation_as_float("max");
+				float step = variable.annotation_as_float("step");
+				if (step == 0.0f)
+					step = 1.0f;
+
+				float value[2] = { 0, 0 };
+				get_uniform_value(variable, value, 2);
+				value[1] = _input->mouse_wheel_delta();
+				value[0] = value[0] + value[1] * step;
+				if (min != max)
 				{
-					const std::time_t t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-					struct tm tm; localtime_s(&tm, &t);
-
-					const int value[4] = {
-						tm.tm_year + 1900,
-						tm.tm_mon + 1,
-						tm.tm_mday,
-						tm.tm_hour * 3600 + tm.tm_min * 60 + tm.tm_sec
-					};
-					set_uniform_value(variable, value, 4);
-					break;
+					value[0] = std::max(value[0], min);
+					value[0] = std::min(value[0], max);
 				}
-				case special_uniform::timer:
-				{
-					const unsigned long long timer_ms = std::chrono::duration_cast<std::chrono::milliseconds>(_last_present_time - _start_time).count();
-					set_uniform_value(variable, static_cast<unsigned int>(timer_ms));
-					break;
-				}
-				case special_uniform::key:
-				{
-					if (_input == nullptr)
-						break;
-
-					if (const int keycode = variable.annotation_as_int("keycode");
-						keycode > 7 && keycode < 256)
-					{
-						if (const std::string_view mode = variable.annotation_as_string("mode");
-							mode == "toggle" || variable.annotation_as_int("toggle"))
-						{
-							bool current_value = false;
-							get_uniform_value(variable, &current_value);
-							if (_input->is_key_pressed(keycode))
-								set_uniform_value(variable, !current_value);
-						}
-						else if (mode == "press")
-							set_uniform_value(variable, _input->is_key_pressed(keycode));
-						else
-							set_uniform_value(variable, _input->is_key_down(keycode));
-					}
-					break;
-				}
-				case special_uniform::mouse_point:
-				{
-					if (_input == nullptr)
-						break;
-
-					set_uniform_value(variable, _input->mouse_position_x(), _input->mouse_position_y());
-					break;
-				}
-				case special_uniform::mouse_delta:
-				{
-					if (_input == nullptr)
-						break;
-
-					set_uniform_value(variable, _input->mouse_movement_delta_x(), _input->mouse_movement_delta_y());
-					break;
-				}
-				case special_uniform::mouse_button:
-				{
-					if (_input == nullptr)
-						break;
-
-					if (const int keycode = variable.annotation_as_int("keycode");
-						keycode >= 0 && keycode < 5)
-					{
-						if (const std::string_view mode = variable.annotation_as_string("mode");
-							mode == "toggle" || variable.annotation_as_int("toggle"))
-						{
-							bool current_value = false;
-							get_uniform_value(variable, &current_value);
-							if (_input->is_mouse_button_pressed(keycode))
-								set_uniform_value(variable, !current_value);
-						}
-						else if (mode == "press")
-							set_uniform_value(variable, _input->is_mouse_button_pressed(keycode));
-						else
-							set_uniform_value(variable, _input->is_mouse_button_down(keycode));
-					}
-					break;
-				}
-				case special_uniform::mouse_wheel:
-				{
-					if (_input == nullptr)
-						break;
-
-					const float min = variable.annotation_as_float("min");
-					const float max = variable.annotation_as_float("max");
-					float step = variable.annotation_as_float("step");
-					if (step == 0.0f)
-						step  = 1.0f;
-
-					float value[2] = { 0, 0 };
-					get_uniform_value(variable, value, 2);
-					value[1] = _input->mouse_wheel_delta();
-					value[0] = value[0] + value[1] * step;
-					if (min != max)
-					{
-						value[0] = std::max(value[0], min);
-						value[0] = std::min(value[0], max);
-					}
-					set_uniform_value(variable, value, 2);
-					break;
-				}
+				set_uniform_value(variable, value, 2);
+				break;
+			}
 #if RESHADE_GUI
-				case special_uniform::overlay_open:
-				{
-					set_uniform_value(variable, _show_overlay);
-					break;
-				}
-				case special_uniform::overlay_active:
-				case special_uniform::overlay_hovered:
-				{
-					// These are set in 'draw_variable_editor' when overlay is open
-					if (!_show_overlay)
-						set_uniform_value(variable, 0);
-					break;
-				}
+			case special_uniform::overlay_open:
+			{
+				set_uniform_value(variable, _show_overlay);
+				break;
+			}
+			case special_uniform::overlay_active:
+			case special_uniform::overlay_hovered:
+			{
+				// These are set in 'draw_variable_editor' when overlay is open
+				if (!_show_overlay)
+					set_uniform_value(variable, 0);
+				break;
+			}
 #endif
-				case special_uniform::screenshot:
-				{
-					set_uniform_value(variable, _should_save_screenshot);
-					break;
-				}
+			case special_uniform::screenshot:
+			{
+				set_uniform_value(variable, _should_save_screenshot);
+				break;
+			}
 			}
 		}
 	}
@@ -4136,7 +4137,7 @@ void reshade::runtime::render_technique(technique &tech, api::command_list *cmd_
 		if (needs_implicit_back_buffer_copy)
 		{
 			// Save back buffer of previous pass
-			const api::resource resources[2] = { back_buffer_resource, _effect_permutations[permutation_index].color_tex};
+			const api::resource resources[2] = { back_buffer_resource, _effect_permutations[permutation_index].color_tex };
 			const api::resource_usage state_old[2] = { api::resource_usage::render_target, api::resource_usage::shader_resource };
 			const api::resource_usage state_new[2] = { api::resource_usage::copy_source, api::resource_usage::copy_dest };
 
@@ -4353,7 +4354,7 @@ void reshade::runtime::save_texture(const texture &tex)
 			{
 				const auto write_callback = [](void *context, void *data, int size) {
 					fwrite(data, 1, size, static_cast<FILE *>(context));
-				};
+					};
 
 				switch (_screenshot_format)
 				{
@@ -4868,8 +4869,8 @@ void reshade::runtime::save_screenshot(const std::string_view postfix)
 			auto screenshot_format = _screenshot_format;
 
 			// Use PNG for HDR; no tonemapping is implemented, so this is the only way to capture a screenshot in HDR.
-			if (((_back_buffer_format == api::format::r10g10b10a2_unorm  ||
-			      _back_buffer_format == api::format::b10g10r10a2_unorm) && _back_buffer_color_space == api::color_space::hdr10_st2084) ||
+			if (((_back_buffer_format == api::format::r10g10b10a2_unorm ||
+				_back_buffer_format == api::format::b10g10r10a2_unorm) && _back_buffer_color_space == api::color_space::hdr10_st2084) ||
 				 (_back_buffer_format == api::format::r16g16b16a16_float && _back_buffer_color_space == api::color_space::extended_srgb_linear))
 				screenshot_format = 3;
 
@@ -4896,7 +4897,7 @@ void reshade::runtime::save_screenshot(const std::string_view postfix)
 			{
 				const auto write_callback = [](void *context, void *data, int size) {
 					fwrite(data, 1, size, static_cast<FILE *>(context));
-				};
+					};
 
 				switch (screenshot_format)
 				{
@@ -4916,9 +4917,9 @@ void reshade::runtime::save_screenshot(const std::string_view postfix)
 					save_success = stbi_write_jpg_to_func(write_callback, file, _width, _height, comp, pixels.data(), _screenshot_jpeg_quality) != 0;
 					break;
 
-				// Implicit HDR PNG when running in HDR
+					// Implicit HDR PNG when running in HDR
 				case 3:
-					save_success = sk_hdr_png::write_image_to_disk(screenshot_path.c_str (), _width, _height, pixels.data(), _screenshot_hdr_bits, _back_buffer_format, _screenshot_clipboard_copy);
+					save_success = sk_hdr_png::write_image_to_disk(screenshot_path.c_str(), _width, _height, pixels.data(), _screenshot_hdr_bits, _back_buffer_format, _screenshot_clipboard_copy);
 					break;
 				}
 
@@ -5092,9 +5093,9 @@ bool reshade::runtime::get_texture_data(api::resource resource, api::resource_us
 					{
 						const uint32_t rgba = *reinterpret_cast<const uint32_t *>(mapped_pixels + x);
 						// Divide by 4 to get 10-bit range (0-1023) into 8-bit range (0-255)
-						pixels[x + 0] = (( rgba & 0x000003FF)        /  4) & 0xFF;
-						pixels[x + 1] = (((rgba & 0x000FFC00) >> 10) /  4) & 0xFF;
-						pixels[x + 2] = (((rgba & 0x3FF00000) >> 20) /  4) & 0xFF;
+						pixels[x + 0] = ((rgba & 0x000003FF) / 4) & 0xFF;
+						pixels[x + 1] = (((rgba & 0x000FFC00) >> 10) / 4) & 0xFF;
+						pixels[x + 2] = (((rgba & 0x3FF00000) >> 20) / 4) & 0xFF;
 						pixels[x + 3] = (((rgba & 0xC0000000) >> 30) * 85) & 0xFF;
 						if (view_format == api::format::b10g10r10a2_unorm)
 							std::swap(pixels[x + 0], pixels[x + 2]);
