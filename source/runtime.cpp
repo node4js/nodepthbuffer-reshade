@@ -897,6 +897,7 @@ void reshade::runtime::on_present(api::command_queue *present_queue)
 	// Save modified INI files
 	if (!ini_file::flush_cache())
 		_preset_save_successful = false;
+#endif
 	}
 
 	if (std::numeric_limits<long>::max() != g_network_traffic)
