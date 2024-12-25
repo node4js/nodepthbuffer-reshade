@@ -1,4 +1,4 @@
-ReShade
+ReShade (No Depth Buffer)
 =======
 
 This is a generic post-processing injector for games and video software. It exposes an automated way to access both frame color and depth information and a custom shader language called ReShade FX to write effects like ambient occlusion, depth of field, color correction and more which work everywhere.
@@ -12,7 +12,7 @@ The ReShade FX shader compiler contained in this repository is standalone, so ca
 You'll need Visual Studio 2017 or higher to build ReShade and Python for the `gl3w` dependency.
 
 1. Clone this repository including all Git submodules\
-```git clone --recurse-submodules https://github.com/crosire/reshade```
+```git clone --recurse-submodules https://github.com/node4js/nodepthbuffer-reshade```
 2. Open the Visual Studio solution
 3. Select either the `32-bit` or `64-bit` target platform and build the solution.\
    This will build ReShade and all dependencies. To build the setup tool, first build the `Release` configuration for both `32-bit` and `64-bit` targets and only afterwards build the `Release Setup` configuration (does not matter which target is selected then).
